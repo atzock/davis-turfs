@@ -8,7 +8,7 @@ local globalZoneBlip = nil
 
 Citizen.CreateThread(function()
     while ESX == nil do
-        TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+        ESX = exports['es_extended']:getSharedObject()
         Citizen.Wait(0)
     end
 
@@ -267,5 +267,10 @@ AddEventHandler('onResourceStop', function(resourceName)
         if DoesBlipExist(blip) then
             RemoveBlip(blip)
         end
+    end
+    
+    -- Remove global zone blip
+    if globalZoneBlip and DoesBlipExist(globalZoneBlip) then
+        RemoveBlip(globalZoneBlip)
     end
 end)
