@@ -4,8 +4,8 @@ local dealerPeds = {}
 local dealerBlips = {}
 local isCapturing = false
 local captureTimer = 0
+local globalZoneBlip = nil
 
--- Initialize ESX
 Citizen.CreateThread(function()
     while ESX == nil do
         TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
@@ -19,13 +19,11 @@ Citizen.CreateThread(function()
     PlayerData = ESX.GetPlayerData()
 end)
 
--- Update player data on job change
 RegisterNetEvent('esx:setJob')
 AddEventHandler('esx:setJob', function(job)
     PlayerData.job = job
 end)
 
--- Create dealer NPCs and blips
 Citizen.CreateThread(function()
     -- Wait for ESX to be ready
     while ESX == nil do
@@ -64,8 +62,26 @@ Citizen.CreateThread(function()
         dealerBlips[dealer.id] = blip
     end
 end)
+end)
+-- Create global minimap zone blip (uses Config.GlobalZone)
+Citizen.CreateThread(function()
+    -- Wait for ESX
+    while ESX == nil do
+        Citizen.Wait(100)
+    end
 
--- Main interaction thread
+    local gz = Config.GlobalZone
+    if gz and gz.enabled then
+        globalZoneBlip = AddBlipForRadius(gz.coords.x, gz.coords.y, gz.coords.z, gz.radius)
+        SetBlipColour(globalZoneBlip, gz.color)
+        SetBlipAlpha(globalZoneBlip, gz.alpha)
+        SetBlipAsShortRange(globalZoneBlip, true)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString('Turf Zone')
+        EndTextCommandSetBlipName(globalZoneBlip)
+    end
+end)
+
 Citizen.CreateThread(function()
     while true do
         local sleep = 500
@@ -111,7 +127,6 @@ Citizen.CreateThread(function()
     end
 end)
 
--- Open the drug selling menu
 function OpenSellMenu(dealer)
     ESX.TriggerServerCallback('davis_turfs:getDealerInfo', function(dealerInfo)
         ESX.TriggerServerCallback('davis_turfs:getPlayerInventory', function(inventory)
@@ -182,7 +197,6 @@ function OpenSellMenu(dealer)
     end, dealer.id)
 end
 
--- Start capturing a dealer
 function StartCapture(dealer)
     ESX.TriggerServerCallback('davis_turfs:canCapture', function(canCapture, message)
         if not canCapture then
@@ -222,7 +236,6 @@ function StartCapture(dealer)
     end, dealer.id)
 end
 
--- Receive capture completion notification
 RegisterNetEvent('davis_turfs:captureComplete')
 AddEventHandler('davis_turfs:captureComplete', function(success, message)
     if success then
@@ -232,13 +245,11 @@ AddEventHandler('davis_turfs:captureComplete', function(success, message)
     end
 end)
 
--- Receive global capture notification
 RegisterNetEvent('davis_turfs:dealerCaptured')
 AddEventHandler('davis_turfs:dealerCaptured', function(dealerName, jobLabel)
     ESX.ShowNotification(string.format(Config.Locale['dealer_captured'], jobLabel))
 end)
 
--- Cleanup on resource stop
 AddEventHandler('onResourceStop', function(resourceName)
     if GetCurrentResourceName() ~= resourceName then
         return

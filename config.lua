@@ -14,9 +14,6 @@ Config.CaptureJob = 'gang' -- Job required to capture dealers (can be a table fo
 Config.PlayerCut = 85 -- Percentage that goes to the player
 Config.FactionCut = 15 -- Percentage that goes to the faction
 
--- Whether to use ESX society accounts for faction earnings
--- If true, money goes to society account (requires esx_society or similar)
--- If false, money is stored in database (custom storage)
 Config.UseSocietyAccount = true
 
 -- Sellable drugs configuration
@@ -28,14 +25,6 @@ Config.Drugs = {
     {item = 'opium', price = 250, label = 'Opium'}
 }
 
--- NPC Dealer locations and configuration
--- Each dealer has:
--- id: unique identifier
--- coords: spawn location (x, y, z, heading)
--- blipCoords: blip location on map
--- ped: ped model
--- drug: which drug this dealer buys (must match Config.Drugs item name)
--- defaultOwner: default faction that owns this dealer (nil for no owner)
 Config.Dealers = {
     {
         id = 1,
@@ -83,6 +72,15 @@ Config.Blip = {
     display = 4
 }
 
+-- Global minimap zone (visible to all players)
+Config.GlobalZone = {
+    enabled = true,
+    -- Default center (change as needed), large radius to make a "big red zone" on the minimap
+    coords = vector3(85.34, -1959.49, 20.13),
+    radius = 600.0,
+    color = 1, -- red
+    alpha = 140 -- semi-transparent
+}
 -- Marker settings for interaction
 Config.Marker = {
     type = 1,
