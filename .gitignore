@@ -1,0 +1,38 @@
+# FiveM specific
+*.rpf
+*.ytd
+*.yft
+*.ydr
+*.ydd
+*.ybn
+*.ymap
+*.ymf
+*.ytyp
+*.awc
+*.rel
+
+# Logs
+*.log
+logs/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Editor specific
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Node modules (if any)
+node_modules/
+
+# Database backups
+*.sql.backup
+*.db.backup
